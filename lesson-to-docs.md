@@ -1,18 +1,25 @@
-# Lesson to Documentation
+---
+ai-readable: true
+execution-mode: automatic
+requires: [Read, Write, Grep, Glob, Sequential]
+target-audience: ai-assistant
+---
 
-**命令**: `/lesson-to-docs [topic] [flags]`
+# AI执行指令：lesson-to-docs
 
-智能知识管理系统，将高价值技术对话转化为结构化文档和架构决策记录。
+**触发命令**: `/lesson-to-docs [topic] [flags]`
 
-## 功能描述
+**我作为AI的执行目标**：智能分析对话内容，自动生成高价值技术文档和架构决策记录。
 
-**智能化**知识文档化系统：
-- **内容质量评级**：自动评估对话价值(A/B/C级)，只记录高价值内容
-- **架构决策追踪**：ADR格式记录设计决策和推理过程
-- **智能去重**：检测相似文档，建议更新而非新建
-- **关联知识网络**：建立文档间关系，形成知识图谱
-- **预览确认**：生成前预览内容，避免垃圾文档
-- **版本追踪**：记录设计演进历史
+## AI执行能力
+
+**我需要具备的分析能力**：
+- **质量识别算法**：自动评估对话价值(A/B/C级)，计算文档化优先级
+- **决策提取引擎**：识别架构决策点、技术选择、设计权衡
+- **相似度检测**：检索existing文档，避免重复创建
+- **知识图谱构建**：自动建立文档间关联关系
+- **结构化生成**：基于模板自动填充内容
+- **迭代追踪**：维护决策演进历史
 
 ## 命令配置
 
@@ -32,147 +39,271 @@ performance-profile: "standard"
 - **MCP Integration**: Sequential (conversation analysis), Context7 (documentation patterns)
 - **Tool Orchestration**: [Read, Write, Edit, Grep, Glob]
 
-## 参数说明
+## AI执行参数解析
 
-### 基础参数
-- `[optional-topic]` - 可选主题分类（如"vue-components"、"api-design"）
+**我如何解析用户输入**：
 
-### 质量控制
-- `--quality [A|B|C]` - 质量过滤，只记录指定级别内容（默认：A+B）
-- `--preview` - 预览模式，显示文档大纲但不生成（推荐）
-- `--force` - 强制执行，覆盖已存在的文档
-
-### 文档类型
-- `--adr` - 生成架构决策记录(ADR)格式
-- `--update` - 更新已有文档而非创建新文档
-- `--guide` - 生成实施指南格式
-
-### 智能选择
-- `--interactive` - 强制交互模式，显示内容评级和选择界面
-- `--all-topics` - 自动处理所有A/B级话题
-- `--related` - 同时更新相关文档的关联信息
-
-## 内容质量评级
-
-### A级内容 (架构决策)
-- **架构设计决策**：系统设计、技术选型、状态码设计
-- **设计模式应用**：复杂业务场景的模式选择
-- **核心业务逻辑**：多模块协作、关键算法
-- **用户体验洞察**：基于场景的UX设计决策
-- **安全风险识别**：威胁分析和防护策略
-
-### B级内容 (技术方案)
-- **实施指南**：具体的技术实现方案
-- **问题解决过程**：复杂bug的排查思路
-- **性能优化**：具体的优化手段和效果
-- **工具使用技巧**：开发工具的高级用法
-
-### C级内容 (基础操作)
-- **日常bug修复**：语法错误、方法名修正
-- **配置调整**：简单的配置文件修改
-- **文档更新**：常规的文档维护
-
-## 执行流程
-
-### 智能分析流程
-**对话扫描** → **内容评级** → **相似度检测** → **关联分析** → **预览生成** → **用户确认** → **文档生成** → **触发系统更新**
-
-### 决策树逻辑
-```
-检测内容 → C级内容？→ 建议跳过(可--force强制)
-         ↓
-         B/A级内容 → 检测重复？→ 建议更新已有文档
-                   ↓
-                   新内容 → 生成预览 → 用户确认 → 生成文档
-```
-
-## 输出位置与格式
-
-### 文档类型与位置
-- **架构决策记录**: `dev-guides/architecture-decisions/ADR-XXX-[主题].md`
-- **实施指南**: `dev-guides/[领域]/[主题]-implementation.md`
-- **技术方案**: `dev-guides/[领域]/[主题]-solution.md`
-- **触发配置**: `CLAUDE.md` 智能触发系统（增强格式）
-
-### 模板文件位置
-- **ADR模板**: `.claude/commands/lesson-to-docs/ADR-template.md`
-- **实施指南模板**: `.claude/commands/lesson-to-docs/implementation-guide-template.md`
-
-### 智能触发系统格式 (新)
 ```yaml
-topic_key:
-  path: dev-guides/path/to/doc.md
-  keywords:
-    - 主关键词(10)  # 权重
-    - 次关键词(8)
-  context: 业务领域|技术栈|使用场景
-  related: [相关文档key1, 相关文档key2]
-  decision_type: architecture|technical|business
-  value_level: A|B
-  last_updated: 2024-01-24
+# 命令解析规则
+command_parsing:
+  base_command: "/lesson-to-docs"
+  optional_topic: 
+    regex: "[a-zA-Z\\-]+"
+    purpose: 约束文档生成领域
+    
+# 标志位执行逻辑  
+flag_processing:
+  quality_filter:
+    "--quality A": 只处理架构决策内容
+    "--quality B": 只处理技术方案内容
+    "--quality C": 强制处理基础操作内容
+    default: A+B 级别
+    
+  output_control:
+    "--preview": 生成大纲但不写入文件
+    "--force": 忽略重复检测，直接覆盖
+    
+  template_selection:
+    "--adr": 使用 ADR-template.md 生成架构决策记录
+    "--guide": 使用 implementation-guide-template.md 生成实施指南
+    "--update [topic]": 更新existing文档而非新建
+    
+  automation_level:
+    "--interactive": 显示分析过程和确认步骤
+    "--all-topics": 自动处理所有高价值话题
+    "--related": 同步更新相关文档链接
 ```
 
-## 使用示例
+## AI内容评级算法
 
-### 基础使用
-```bash
-# 智能分析模式（推荐）- 评级+预览+确认
-/lesson-to-docs
+**我如何评估对话价值**：
 
-# 预览模式 - 只看不生成
-/lesson-to-docs --preview
-
-# 质量过滤 - 只记录A级内容
-/lesson-to-docs --quality A
+```python
+# 评级算法伪代码
+def evaluate_conversation_quality(conversation):
+    score = 0
+    quality_indicators = {
+        'A_level': {
+            'keywords': ['架构', '设计', '决策', '模式', '选型', 'UX洞察', '安全风险'],
+            'complexity_threshold': 0.8,
+            'impact_scope': ['system_wide', 'cross_module', 'user_experience'],
+            'decision_weight': 10
+        },
+        'B_level': {
+            'keywords': ['实施', '解决方案', '优化', '技巧', 'bug排查'],
+            'complexity_threshold': 0.6,
+            'impact_scope': ['module_level', 'component_level'],
+            'decision_weight': 7
+        },
+        'C_level': {
+            'keywords': ['修复', '调整', '配置', '语法错误'],
+            'complexity_threshold': 0.3,
+            'impact_scope': ['file_level', 'line_level'],
+            'decision_weight': 3
+        }
+    }
+    
+    # 执行评分逻辑
+    for level, criteria in quality_indicators.items():
+        if match_keywords(conversation, criteria['keywords']) and \
+           complexity_score(conversation) >= criteria['complexity_threshold']:
+            return level
+            
+    return 'C_level'  # default
 ```
 
-### 高级使用
-```bash
-# 架构决策模式 - ADR格式
-/lesson-to-docs --adr
+**评级结果决定执行路径**：
+- **A级** → 使用 `ADR-template.md` 生成架构决策记录
+- **B级** → 使用 `implementation-guide-template.md` 生成实施指南
+- **C级** → 提示跳过（除非 `--force` 标志）
 
-# 更新已有文档
-/lesson-to-docs --update api-design
+## AI执行流程
 
-# 处理所有高价值内容
-/lesson-to-docs --all-topics --quality A
+**我的执行步骤**：
 
-# 交互模式查看详细分析
-/lesson-to-docs --interactive --preview
+```yaml
+execution_pipeline:
+  step_1_scan:
+    action: 扫描当前对话内容
+    tools: [Read]
+    output: conversation_context
+    
+  step_2_evaluate:
+    action: 质量评级和价值评分
+    algorithm: quality_scoring_function
+    output: quality_level, topics_list
+    
+  step_3_similarity:
+    action: 检测相似已有文档
+    tools: [Grep, Glob]
+    search_paths: ['dev-guides/**/*.md']
+    output: similar_docs_list
+    
+  step_4_decision:
+    action: 决定执行路径
+    logic: |
+      IF quality_level == 'C' AND not flags.force:
+        RETURN suggest_skip()
+      ELIF similar_docs_list.exists:
+        RETURN suggest_update(similar_docs_list[0])
+      ELSE:
+        RETURN generate_new_document()
+        
+  step_5_generate:
+    action: 选择模板并生成内容
+    template_mapping:
+      A_level: 'ADR-template.md'
+      B_level: 'implementation-guide-template.md'
+    tools: [Read, Write]
+    
+  step_6_finalize:
+    action: 更新相关链接和索引
+    tools: [Edit]
+    targets: ['CLAUDE.md', 'README.md']
 ```
 
-### 典型工作流
-```bash
-# 1. 先预览内容价值
-/lesson-to-docs --preview
-
-# 2. 确认后生成文档
-/lesson-to-docs --quality A
-
-# 3. 更新相关文档链接
-/lesson-to-docs --related
+**决策树简化表示**：
+```
+质量评级 → C级? → 提示跳过 (--force可覆盖)
+        ↓
+        A/B级 → 相似文档? → 提示更新
+               ↓
+               新内容 → 选择模板 → 填充数据 → 生成文档
 ```
 
-## 内容评级示例
+## AI数据映射与输出
 
-### A级示例 (架构决策)
-```
-🎯 [A级] NFC活动状态码设计
-  - 决策类型：架构决策
-  - 影响范围：整个NFC系统
-  - 关键洞察：NFC碰一碰无需返回按钮
-  - 建议格式：ADR
-  - 存储位置：architecture-decisions/
+**我如何确定输出位置**：
+
+```yaml
+# 输出路径生成规则
+path_generation:
+  A_level_content:
+    base_path: "dev-guides/architecture-decisions/"
+    filename_pattern: "ADR-{number:03d}-{topic-slug}.md"
+    number_source: existing_adr_count + 1
+    topic_slug: sanitize(extract_main_topic())
+    
+  B_level_content:
+    base_path: "dev-guides/{domain}/"
+    filename_pattern: "{topic-slug}-implementation.md"
+    domain: detect_domain_from_conversation()
+    topic_slug: sanitize(extract_implementation_topic())
+
+# 模板读取配置
+template_sources:
+  adr_template: ".claude/commands/lesson-to-docs/ADR-template.md"
+  implementation_template: ".claude/commands/lesson-to-docs/implementation-guide-template.md"
+  
+# 数据映射规则
+data_extraction:
+  conversation_analysis:
+    main_topic: extract_primary_decision_point()
+    background: summarize_problem_context(max_words=200)
+    solutions: identify_considered_options()
+    final_choice: extract_final_decision()
+    reasoning: extract_decision_rationale()
+    
+  metadata_generation:
+    current_date: get_system_date()
+    author: "Claude AI Assistant"
+    decision_id: generate_sequential_id()
+    
+# 触发系统更新格式
+claude_md_trigger_format:
+```yaml
+{topic_key}:
+  path: {generated_file_path}
+  keywords: {extracted_keywords_with_weights}
+  context: {domain}|{tech_stack}|{usage_scenario}
+  related: {linked_documents}
+  decision_type: {A_level: "architecture", B_level: "technical"}
+  value_level: {quality_level}
+  last_updated: {current_date}
 ```
 
-### B级示例 (技术方案)
+## AI执行示例
+
+**我如何响应不同的命令输入**：
+
+```yaml
+# 场景1: 无参数智能分析模式
+user_input: "/lesson-to-docs"
+my_execution:
+  - step: 扫描对话内容
+  - step: 识别到A级架构决策内容 
+  - step: 选择ADR模板，生成预览
+  - step: 询问用户确认后生成文档
+
+# 场景2: 预览模式
+user_input: "/lesson-to-docs --preview"  
+my_execution:
+  - step: 分析对话，评级为B级
+  - step: 生成实施指南大纲
+  - step: 显示预览但不写入文件
+
+# 场景3: 强制A级处理
+user_input: "/lesson-to-docs --quality A"
+my_execution:
+  - step: 只查找架构决策内容
+  - step: 如果没有A级内容，提示无匹配内容
+  - step: 如果有A级内容，生成ADR文档
 ```
-🔧 [B级] Vue组件乐观更新模式
-  - 决策类型：技术方案
-  - 影响范围：前端组件
-  - 解决问题：API失败时UI状态回滚
-  - 建议格式：实施指南
-  - 存储位置：vue-components/
+
+**高级场景执行**：
+
+```yaml  
+# 场景4: 强制ADR模式
+user_input: "/lesson-to-docs --adr"
+my_execution:
+  - step: 强制使用ADR模板
+  - step: 即使内容是B级也按架构决策处理
+  - step: 生成到architecture-decisions/目录
+
+# 场景5: 更新现有文档
+user_input: "/lesson-to-docs --update api-design"  
+my_execution:
+  - step: 搜索api-design相关文档
+  - step: 找到existing文档并读取
+  - step: 合并新对话内容到现有文档
+
+# 场景6: 批量处理模式
+user_input: "/lesson-to-docs --all-topics --quality A"
+my_execution:
+  - step: 扫描对话中所有A级话题
+  - step: 为每个话题生成单独的ADR
+  - step: 批量更新触发系统配置
+```
+
+## AI分析输出示例
+
+**我如何向用户展示分析结果**：
+
+```yaml
+# 分析报告格式
+analysis_output:
+  quality_assessment:
+    detected_level: "A级架构决策"
+    confidence_score: 0.9
+    key_indicators: ["状态码设计", "系统架构", "用户体验决策"]
+    
+  content_extraction:
+    main_decision: "NFC活动状态码标准化"
+    alternatives: ["简单404统一", "详细状态区分", "混合模式"]  
+    chosen_solution: "详细状态区分(404/410/412/413/423)"
+    key_reasoning: ["用户体验优化", "错误信息精确", "前端状态管理"]
+    
+  generation_plan:
+    template_choice: "ADR-template.md"
+    output_path: "dev-guides/architecture-decisions/ADR-003-nfc-status-code-design.md"
+    related_docs: ["nfc-activity.html", "NfcController.php"]
+    
+  preview_content: |
+    # ADR-003: NFC活动状态码设计
+    ## 背景
+    NFC活动页面需要区分不同的错误状态...
+    ## 考虑的方案
+    ### 方案A: 统一404错误...
 ```
 
 ### C级示例 (基础修复)
